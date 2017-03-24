@@ -20,7 +20,26 @@ namespace Algo
 
         public double DistNorm2( User u1, User u2 )
         {
-            return 0;
+            var sum = u1.Ratings.Select(mr1 => new
+                        {
+                            R1 = mr1.Value,
+                            R2 = u2.Ratings.GetValueWithDefault(mr1.Key, -1)
+                        })
+                        .Where(r1r2 => r1r2.R2 >= 0)
+                        .Select(r1r2 => r1r2.R1 - r1r2.R2)
+                        .Select(delta => delta * delta)
+                        .Sum();
+            return Math.Sqrt( sum );
+        }
+    }
+
+
+    public static class DictionaryExtension
+    {
+        public static TValue GetValueWithDefault<TKey, TValue>( this Dictionary<TKey,TValue> @this, TKey key, TValue def )
+        {
+            TValue v;
+            return @this.TryGetValue(key, out v) ? v : def;
         }
     }
 }
