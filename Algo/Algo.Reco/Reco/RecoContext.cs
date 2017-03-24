@@ -17,5 +17,10 @@ namespace Algo
             Movies = Movie.ReadMovies( Path.Combine( folder, "movies.dat" ) );
             User.ReadRatings( Users, Movies, Path.Combine( folder, "ratings.dat" ) );
         }
+
+        public double DistNorm2( User u1, User u2 )
+        {
+            return 0;
+        }
     }
 }
