@@ -43,19 +43,8 @@ namespace Algo
 
         public double SimilarityPearson(User u1, User u2)
         {
-            int count = 0;
             IEnumerable<Movie> common = u1.Ratings.Keys.Intersect(u2.Ratings.Keys);
-            foreach( var m in common)
-            {
-                count++;
-                int r1 = u1.Ratings[m];
-                int r2 = u2.Ratings[m];
-
-            }
-            if (count == 0) return 0.0;
-            return 0;
         }
-
 
         public double SimilarityPearson(params int[] values)
         {
@@ -104,10 +93,13 @@ namespace Algo
                 double d = Math.Abs(onlyOne.Key - onlyOne.Value);
                 return 1 / (1 + d);
             }
-            double numerator = sumXY - (sumX * sumY / count);
-            double denumerator1 = sumX2 - (sumX * sumX / count);
-            double denumerator2 = sumY2 - (sumY * sumY / count);
-            return numerator / Math.Sqrt(denumerator1 * denumerator2);
+            checked
+            {
+                double numerator = sumXY - (sumX * sumY / count);
+                double denumerator1 = sumX2 - (sumX * sumX / count);
+                double denumerator2 = sumY2 - (sumY * sumY / count);
+                return numerator / Math.Sqrt(denumerator1 * denumerator2);
+            }
         }
     }
 
