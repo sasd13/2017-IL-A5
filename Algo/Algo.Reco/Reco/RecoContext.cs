@@ -44,15 +44,16 @@ namespace Algo
         public double SimilarityPearson(User u1, User u2)
         {
             IEnumerable<Movie> common = u1.Ratings.Keys.Intersect(u2.Ratings.Keys);
+            return SimilarityPearson( common.Select( m => new KeyValuePair<int,int>( u1.Ratings[m], u2.Ratings[m] ) ) );
         }
 
-        public double SimilarityPearson(params int[] values)
+        static public double SimilarityPearson(params int[] values)
         {
             if(values == null || (values.Length & 1) != 0) throw new ArgumentException();
             return SimilarityPearson(Convert(values));
         }
 
-        IEnumerable<KeyValuePair<int,int>> Convert(int[] values)
+        static IEnumerable<KeyValuePair<int,int>> Convert(int[] values)
         {
             Debug.Assert(values != null && (values.Length & 1) == 0);
             for (int i = 0; i < values.Length; i++)
@@ -61,12 +62,12 @@ namespace Algo
             }
         }
 
-        public double SimilarityPearson(IEnumerable<int> v1, IEnumerable<int> v2)
+        static public double SimilarityPearson(IEnumerable<int> v1, IEnumerable<int> v2)
         {
             return SimilarityPearson(v1.Zip(v2, (x, y) => new KeyValuePair<int, int>(x, y)));
         }
 
-        public double SimilarityPearson(IEnumerable<KeyValuePair<int,int>> values )
+        static public double SimilarityPearson(IEnumerable<KeyValuePair<int,int>> values )
         {
             double sumX = 0.0;
             double sumY = 0.0;
