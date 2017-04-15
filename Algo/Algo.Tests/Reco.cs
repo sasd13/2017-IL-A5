@@ -130,5 +130,16 @@ namespace Algo.Tests
                 Assert.That(_context.Movies[i].MovieID, Is.EqualTo(i + 1));
         }
 
+        [Test]
+        public void check_known_similarities()
+        {
+            Assert.That(_context.SimilarityPearson(_context.Users[3712], _context.Users[3640]), Is.EqualTo(0.161633188914379).Within(1e-15));
+            Assert.That(_context.SimilarityPearson(_context.Users[3712], _context.Users[486]), Is.EqualTo(-0.18978131929287).Within(1e-15));
+            Assert.That(_context.SimilarityPearson(_context.Users[3712], _context.Users[286]), Is.EqualTo(0.00577164323971453).Within(1e-15));
+            Assert.That(_context.SimilarityPearson(_context.Users[3640], _context.Users[486]), Is.EqualTo(-0.151923076923077).Within(1e-15));
+            Assert.That(_context.SimilarityPearson(_context.Users[3640], _context.Users[286]), Is.EqualTo(0.28064295060584).Within(1e-15));
+            Assert.That(_context.SimilarityPearson(_context.Users[486], _context.Users[286]), Is.EqualTo(-0.692820323027552).Within(1e-15));
+        }
+
     }
 }
