@@ -11,24 +11,32 @@ namespace Algo
     {
         public User[] Users { get; private set; }
         public Movie[] Movies { get; private set; }
+        public int RatingCount { get; private set; }
 
-        public void LoadFrom( string folder )
+        public bool LoadFrom(string folder)
         {
-            Users = User.ReadUsers( Path.Combine( folder, "users.dat" ) );
-            Movies = Movie.ReadMovies( Path.Combine( folder, "movies.dat" ) );
-            User.ReadRatings( Users, Movies, Path.Combine( folder, "ratings.dat" ) );
+            string p = Path.Combine(folder, "users.dat");
+            if (!File.Exists(p)) return false; 
+            Users = User.ReadUsers(p);
+            p = Path.Combine(folder, "movies.dat");
+            if (!File.Exists(p)) return false; 
+            Movies = Movie.ReadMovies(p);
+            p = Path.Combine(folder, "ratings.dat");
+            if (!File.Exists(p)) return false; 
+            RatingCount = User.ReadRatings(Users, Movies, p);
+            return true;
         }
 
-        public double DistNorm2( User u1, User u2 )
+        public double DistNorm2(User u1, User u2)
         {
             var squareDeltas = u1.Ratings.Select(mr1 => new
-                        {
-                            R1 = mr1.Value,
-                            R2 = u2.Ratings.GetValueWithDefault(mr1.Key, -1)
-                        })
-                        .Where(r1r2 => r1r2.R2 >= 0)
-                        .Select(r1r2 => r1r2.R1 - r1r2.R2)
-                        .Select(delta => delta * delta);
+            {
+                R1 = mr1.Value,
+                R2 = u2.Ratings.GetValueWithDefault(mr1.Key, -1)
+            })
+            .Where(r1r2 => r1r2.R2 >= 0)
+            .Select(r1r2 => r1r2.R1 - r1r2.R2)
+            .Select(delta => delta * delta);
             // By considering the users as being the same, we boost
             // the movies loved the most by all users.
             return squareDeltas.Any()
@@ -44,16 +52,16 @@ namespace Algo
         public double SimilarityPearson(User u1, User u2)
         {
             IEnumerable<Movie> common = u1.Ratings.Keys.Intersect(u2.Ratings.Keys);
-            return SimilarityPearson( common.Select( m => new KeyValuePair<int,int>( u1.Ratings[m], u2.Ratings[m] ) ) );
+            return SimilarityPearson(common.Select(m => new KeyValuePair<int, int>(u1.Ratings[m], u2.Ratings[m])));
         }
 
         static public double SimilarityPearson(params int[] values)
         {
-            if(values == null || (values.Length & 1) != 0) throw new ArgumentException();
+            if (values == null || (values.Length & 1) != 0) throw new ArgumentException();
             return SimilarityPearson(Convert(values));
         }
 
-        static IEnumerable<KeyValuePair<int,int>> Convert(int[] values)
+        static IEnumerable<KeyValuePair<int, int>> Convert(int[] values)
         {
             Debug.Assert(values != null && (values.Length & 1) == 0);
             for (int i = 0; i < values.Length; i++)
@@ -67,7 +75,7 @@ namespace Algo
             return SimilarityPearson(v1.Zip(v2, (x, y) => new KeyValuePair<int, int>(x, y)));
         }
 
-        static public double SimilarityPearson(IEnumerable<KeyValuePair<int,int>> values )
+        static public double SimilarityPearson(IEnumerable<KeyValuePair<int, int>> values)
         {
             double sumX = 0.0;
             double sumY = 0.0;
@@ -88,22 +96,24 @@ namespace Algo
                 sumY2 += y * y;
             }
             if (count == 0) return 0.0;
-            if( count == 1 )
+            if (count == 1)
             {
                 var onlyOne = values.Single();
                 double d = Math.Abs(onlyOne.Key - onlyOne.Value);
                 return 1 / (1 + d);
             }
-            checked
+            double numerator = sumXY - (sumX * sumY / count);
+            double denumerator1 = sumX2 - (sumX * sumX / count);
+            double denumerator2 = sumY2 - (sumY * sumY / count);
+            var result = numerator / Math.Sqrt(denumerator1 * denumerator2);
+            if (double.IsNaN(result))
             {
-                double numerator = sumXY - (sumX * sumY / count);
-                double denumerator1 = sumX2 - (sumX * sumX / count);
-                double denumerator2 = sumY2 - (sumY * sumY / count);
-                return numerator / Math.Sqrt(denumerator1 * denumerator2);
+                double sumSquare = values.Select(v => v.Key - v.Value).Select(v => v * v).Sum();
+                result = 1.0 / (1 + Math.Sqrt(sumSquare));
             }
+            return result;
         }
     }
-
 
     public static class DictionaryExtension
     {
