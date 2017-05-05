@@ -79,7 +79,7 @@ namespace Algo.Tests
         [Test]
         public void creating_a_Meeting()
         {
-            Meeting m = new Meeting(GetFlightDataPath());
+            Meeting m = new Meeting(GetFlightDataPath(), 676);
             Assert.That(m.Guests.Count, Is.EqualTo(9));
             foreach( var g in m.Guests )
             {

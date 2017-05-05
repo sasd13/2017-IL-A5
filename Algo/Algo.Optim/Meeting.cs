@@ -17,9 +17,10 @@ namespace Algo.Optim
 
     }
 
-    public class Meeting
+    public class Meeting : SolutionSpace
     {
-        public Meeting(string flightDatabasePath)
+        public Meeting(string flightDatabasePath, int randomSeed )
+            : base( randomSeed )
         {
             Database = new FlightDatabase(flightDatabasePath);
             Location = Airport.FindByCode("LHR");
@@ -75,6 +76,14 @@ namespace Algo.Optim
                 SelectCandidateFlightsForArrival(g);
                 SelectCandidateFlightsForDeparture(g);
             }
+            Initialize( Guests.Select( g => new { A = g.ArrivalFlights.Count, D = g.DepartureFlights.Count } )
+                                .Aggregate( new List<int>(), (list,e) => 
+                                                {
+                                                    list.Add(e.A);
+                                                    list.Add(e.D);
+                                                    return list;
+                                                } )
+                                .ToArray() );
         }
 
         void SelectCandidateFlightsForArrival(Guest g)
@@ -96,11 +105,15 @@ namespace Algo.Optim
             g.DepartureFlights.AddRange(flights);
         }
 
+        protected override SolutionInstance CreateSolutionInstance(int[] coord)
+        {
+            return new MeetingInstance( this, coord );
+        }
+
         public double SolutionCardinality => Guests.Select(g => (double)g.ArrivalFlights.Count * g.DepartureFlights.Count)
                                                     .Aggregate(1.0, (acc, card) => acc * card);
 
         public FlightDatabase Database { get; }
-
 
         public List<Guest> Guests { get; } = new List<Guest>();
 
