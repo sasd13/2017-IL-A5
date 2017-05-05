@@ -81,7 +81,7 @@ namespace Algo.Tests
         {
             Meeting m = new Meeting(GetFlightDataPath(), 676);
             Assert.That(m.Guests.Count, Is.EqualTo(9));
-            foreach( var g in m.Guests )
+            foreach (var g in m.Guests)
             {
                 Assert.That(g.ArrivalFlights.Count, Is.GreaterThan(3));
                 Assert.That(g.DepartureFlights.Count, Is.GreaterThan(3));
@@ -90,5 +90,15 @@ namespace Algo.Tests
             Console.WriteLine($"Cardinality = {m.SolutionCardinality}");
         }
 
+        [Test]
+        public void random_algorithm()
+        {
+            Meeting m = new Meeting(GetFlightDataPath(), 124);
+            for( int i = 0; i < 200; ++i )
+            {
+                m.TryRandom(200);
+                Console.WriteLine($"After {i*200} random => Best = {m.BestSolution.Cost} €, Worst = {m.WorstSolution.Cost} €.");
+            }
+        }
     }
 }

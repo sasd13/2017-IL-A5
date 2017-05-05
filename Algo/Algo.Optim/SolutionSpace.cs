@@ -17,6 +17,8 @@ namespace Algo.Optim
 
         public SolutionInstance BestSolution { get; internal set; }
 
+        public SolutionInstance WorstSolution { get; internal set; }
+
         protected void Initialize(int[] cardinalities)
         {
             Cardinalities = cardinalities;
@@ -36,7 +38,7 @@ namespace Algo.Optim
             return CreateSolutionInstance(coord);
         }
 
-        public void TryRandom( int nbTry )
+        public void TryRandom(int nbTry)
         {
             while (--nbTry >= 0)
             {
