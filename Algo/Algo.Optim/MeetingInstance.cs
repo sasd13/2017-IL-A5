@@ -15,6 +15,10 @@ namespace Algo.Optim
 
         public new Meeting Space => (Meeting)base.Space;
 
+        public DateTime BusTimeOnArrival { get; private set; }
+
+        public DateTime BusTimeOnDeparture { get; private set; }
+
         SimpleFlight ArrivalFor(int guestIdx)
         {
             return Space.Guests[guestIdx].ArrivalFlights[Coordinates[guestIdx*2]];
@@ -34,15 +38,16 @@ namespace Algo.Optim
                 Departure = DepartureFor(idx),
                 Index = idx
             });
-            var maxArrivalTime = guests.Select(g => g.Arrival.ArrivalTime).Max();
-            var minDepartureTime = guests.Select(g => g.Departure.DepartureTime).Min();
+            var maxArrivalTime = BusTimeOnArrival = guests.Select(g => g.Arrival.ArrivalTime).Max();
+            var minDepartureTime = BusTimeOnDeparture = guests.Select(g => g.Departure.DepartureTime).Min();
+
             var totalMinutesWaitArrival = guests.Select(g => (maxArrivalTime - g.Arrival.ArrivalTime).TotalMinutes)
                                                 .Sum();
             var totalMinutesWaitDeparture = guests.Select(g => (g.Departure.DepartureTime - minDepartureTime).TotalMinutes)
                                                 .Sum();
             var waitCost = (totalMinutesWaitArrival + totalMinutesWaitDeparture) * Space.WaitingMinutePrice;
 
-            var flightCost = guests.Select(g => g.Arrival.Price).Sum() + guests.Select(g => g.Departure.Price).Sum();
+            var flightCost = guests.Select(g => g.Arrival.Price + g.Departure.Price).Sum();
 
             return waitCost + flightCost;
         }
