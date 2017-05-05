@@ -10,7 +10,9 @@ namespace Algo.Tests
 {
     [TestFixture]
     public class Reco
-    { 
+    {
+        static string path = @"C:\Users\ssaidali2\Projects\Intech\2017-IL-A5\Algo\ThirdParty\MovieData\";
+
         static string GetMovieDataPath( [CallerFilePath]string thisFilePath = null )
         {
             string algoPath = Path.GetDirectoryName(Path.GetDirectoryName(thisFilePath));
