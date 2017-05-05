@@ -17,7 +17,7 @@ namespace Algo.Optim
         {
             _path = path[path.Length-1] != '\\' ? path+'\\' : path;
             _cache = new Dictionary<string, IList<SimpleFlight>>();
-            Airport.Initialize( path + "airports.txt" );
+            Airport.Initialize( Path.Combine( path, "airports.txt" ) );
         }
 
         KayakSession KayakSession
@@ -28,7 +28,7 @@ namespace Algo.Optim
         public IList<SimpleFlight> GetFlights( DateTime day, Airport from, Airport to )
         {
             IList<SimpleFlight> flights;
-            string p = String.Format( "{3}{0:yyyy}\\{0:MM}-{0:dd}\\{1}-{2}.txt", day.Date, from.Code, to.Code, _path );
+            string p = $"{_path}{day.Date:yyyy}\\{day.Date:MM}-{day.Date:dd}\\{from.Code}-{to.Code}.txt";
             if( !_cache.TryGetValue( p, out flights ) )
             {
                 if( File.Exists( p ) )
