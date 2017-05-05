@@ -23,6 +23,16 @@ namespace Algo.Optim
 
         public double Cost => _cost >= 0 ? _cost : (_cost = ComputeCost());
 
-        protected abstract double ComputeCost();
+        double ComputeCost()
+        {
+            double c = DoComputeCost();
+            if (_space.BestSolution == null || c < _space.BestSolution.Cost)
+            {
+                _space.BestSolution = this;
+            }
+            return c;
+        }
+
+        protected abstract double DoComputeCost();
     }
 }

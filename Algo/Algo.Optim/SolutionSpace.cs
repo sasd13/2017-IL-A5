@@ -15,6 +15,8 @@ namespace Algo.Optim
             _random = new Random(seed);
         }
 
+        public SolutionInstance BestSolution { get; internal set; }
+
         protected void Initialize(int[] cardinalities)
         {
             Cardinalities = cardinalities;
@@ -32,6 +34,14 @@ namespace Algo.Optim
                 coord[i] = _random.Next(Cardinalities[i]);
             }
             return CreateSolutionInstance(coord);
+        }
+
+        public void TryRandom( int nbTry )
+        {
+            while (--nbTry >= 0)
+            {
+                var c = GetRandomInstance().Cost;
+            }
         }
 
         protected abstract SolutionInstance CreateSolutionInstance(int[] coord);
