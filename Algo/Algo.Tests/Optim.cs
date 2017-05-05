@@ -81,10 +81,13 @@ namespace Algo.Tests
         {
             Meeting m = new Meeting(GetFlightDataPath());
             Assert.That(m.Guests.Count, Is.EqualTo(9));
-            for(int i = 0; i < 9; ++i )
+            foreach( var g in m.Guests )
             {
-                Assert.That(m.Guests[1].ArrivalFlights.Count, Is.GreaterThan(3));
+                Assert.That(g.ArrivalFlights.Count, Is.GreaterThan(3));
+                Assert.That(g.DepartureFlights.Count, Is.GreaterThan(3));
+                Console.WriteLine($"{g.Name} ({g.Location.Code}): {g.ArrivalFlights.Count} {g.DepartureFlights.Count}");
             }
+            Console.WriteLine($"Cardinality = {m.SolutionCardinality}");
         }
 
     }

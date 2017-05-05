@@ -14,6 +14,7 @@ namespace Algo.Optim
         public List<SimpleFlight> ArrivalFlights { get; } = new List<SimpleFlight>();
 
         public List<SimpleFlight> DepartureFlights { get; } = new List<SimpleFlight>();
+
     }
 
     public class Meeting
@@ -21,7 +22,7 @@ namespace Algo.Optim
         public Meeting(string flightDatabasePath)
         {
             Database = new FlightDatabase(flightDatabasePath);
-            Location = Airport.FindByCode( "LHR" );
+            Location = Airport.FindByCode("LHR");
             Guests.Add(new Guest()
             {
                 Name = "Adolf",
@@ -71,11 +72,12 @@ namespace Algo.Optim
             MinDepartureDate = new DateTime(2010, 8, 3, 15, 0, 0);
         }
 
-
         public FlightDatabase Database { get; }
 
 
         public List<Guest> Guests { get; } = new List<Guest>();
+
+        public int MaxFlightCount = 50;
 
         public DateTime MaxArrivalDate { get; }
 
