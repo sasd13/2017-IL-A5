@@ -70,7 +70,34 @@ namespace Algo.Optim
             });
             MaxArrivalDate = new DateTime(2010, 7, 27, 17, 0, 0);
             MinDepartureDate = new DateTime(2010, 8, 3, 15, 0, 0);
+            foreach (var g in Guests)
+            {
+                SelectCandidateFlightsForArrival(g);
+                SelectCandidateFlightsForDeparture(g);
+            }
         }
+
+        void SelectCandidateFlightsForArrival(Guest g)
+        {
+            var flights = Database.GetFlights(MaxArrivalDate, g.Location, Location)
+                            .Concat(Database.GetFlights(MaxArrivalDate.AddDays(-1), g.Location, Location))
+                            .Where(f => f.ArrivalTime < MaxArrivalDate)
+                            .OrderByDescending(f => f.ArrivalTime)
+                            .Take(MaxFlightCount);
+            g.ArrivalFlights.AddRange(flights);
+        }
+
+        void SelectCandidateFlightsForDeparture(Guest g)
+        {
+            var flights = Database.GetFlights(MinDepartureDate, Location, g.Location)
+                                    .Where(f => f.DepartureTime > MinDepartureDate)
+                                    .OrderBy(f => f.DepartureTime)
+                                    .Take(MaxFlightCount);
+            g.DepartureFlights.AddRange(flights);
+        }
+
+        public double SolutionCardinality => Guests.Select(g => (double)g.ArrivalFlights.Count * g.DepartureFlights.Count)
+                                                    .Aggregate(1.0, (acc, card) => acc * card);
 
         public FlightDatabase Database { get; }
 
