@@ -82,7 +82,7 @@ namespace Algo.Optim
             var flights = Database.GetFlights(MaxArrivalDate, g.Location, Location)
                             .Concat(Database.GetFlights(MaxArrivalDate.AddDays(-1), g.Location, Location))
                             .Where(f => f.ArrivalTime < MaxArrivalDate)
-                            .OrderBy(f => f.ArrivalTime)
+                            .OrderByDescending(f => f.ArrivalTime)
                             .Take(MaxFlightCount);
             g.ArrivalFlights.AddRange(flights);
         }
