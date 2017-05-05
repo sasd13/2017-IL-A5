@@ -12,6 +12,7 @@ namespace Algo.Tests
     {
         static string _badDataPath = @"C:\Intech\2017-1\S9-10\2017-IL-A5\Algo\ThirdParty\MovieData\MovieLens\";
         static string _goodDataPath = @"C:\Intech\2017-1\S9-10\2017-IL-A5\Algo\ThirdParty\MovieData\";
+        static string path = @"C:\Users\ssaidali2\Projects\Intech\2017-IL-A5\Algo\ThirdParty\MovieData\";
 
         [Test]
         public void CorrectData()
@@ -111,5 +112,15 @@ namespace Algo.Tests
                 Assert.That( c.Movies[i].MovieID, Is.EqualTo( i+1 ) );
         }
 
+        [Test]
+        public void TestGetBest()
+        {
+            RecoContext c = new RecoContext();
+            c.LoadFrom(path);
+
+            User u = c.Users[3712];
+            IEnumerable<Movie> movies = c.getBest(u, 10);
+            Assert.NotNull(movies);
+        }
     }
 }

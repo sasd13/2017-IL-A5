@@ -9,6 +9,8 @@ namespace Algo
 {
     public class RecoContext
     {
+        static string path = @"C:\Users\ssaidali2\Projects\Intech\2017-IL-A5\Algo\ThirdParty\MovieData\";
+
         public User[] Users { get; private set; }
         public Movie[] Movies { get; private set; }
 
@@ -102,8 +104,97 @@ namespace Algo
                 return numerator / Math.Sqrt(denumerator1 * denumerator2);
             }
         }
+
+        public IEnumerable<Movie> getBest(User u, int max)
+        {
+            List<Movie> results = new List<Movie>();
+
+            List<KeyValuePair<User, double>> similarities = new List<KeyValuePair<User, double>>();
+
+            foreach (User user in Users)
+            {
+                if (!user.UserID.Equals(u.UserID))
+                {
+                    similarities.Add(new KeyValuePair<User, double>(user, SimilarityPearson(u, user)));
+                }
+            }
+
+            Dictionary<Movie, Coeff> moviesMayLiked = new Dictionary<Movie, Coeff>();
+            Dictionary<Movie, int> moviesNotSeen;
+            Coeff like;
+
+            foreach (KeyValuePair<User, double> kvp in similarities)
+            {
+                moviesNotSeen = getNotSeen(u, kvp.Key);
+                foreach (KeyValuePair<Movie, int> movieNotSeen in moviesNotSeen)
+                {
+                    like = moviesMayLiked.GetValueWithDefault(movieNotSeen.Key, null);
+
+                    if (like == null)
+                    {
+                        moviesMayLiked.Add(movieNotSeen.Key, new Coeff(movieNotSeen.Value, kvp.Value));
+                    }
+                    else
+                    {
+                        like.Rating += movieNotSeen.Value;
+                        like.Distance += kvp.Value;
+                        like.Count++;
+                    }
+                }
+            }
+
+            IOrderedEnumerable<KeyValuePair<Movie, Coeff>> orderedEnum = moviesMayLiked.OrderByDescending(e => e.Value.Rating/e.Value.Distance);
+            /*
+             * pourquoi e.Value.Rating / e.Value.Distance ?
+             * 
+             * e.Value.Rating / e.Value.Count => rating moyen
+             * e.Value.Distance / e.Value.Count => distance moyenne
+             * le but est de classer les films selon par rating moyen decroissant et par distance moyenne croissante => quotient = e.Value.Rating / e.Value.Coeff
+             * 
+             */
+            List<KeyValuePair<Movie, Coeff>> finalEnum = orderedEnum.ToList();
+            
+            foreach (KeyValuePair<Movie, Coeff> kvp in finalEnum)
+            {
+                results.Add(kvp.Key);
+            }
+
+            return results.Count >= max ? results.GetRange(0, max) : results;
+        }
+
+        public Dictionary<Movie, int> getNotSeen(User u1, User u2)
+        {
+            Dictionary<Movie, int> results = new Dictionary<Movie, int>();
+
+            IEnumerable<Movie> distincts = u2.Ratings.Keys.Except(u1.Ratings.Keys);
+
+            foreach (Movie movie in distincts)
+            {
+                if (u2.Ratings[movie] >= 3)
+                {
+                    results.Add(movie, u2.Ratings[movie]);
+                }
+            }
+
+            return results;
+        }
     }
 
+    /*
+     * Coefficient du film en tenant compte de 3 paramètres : la notation, la distance et le nombre de vues
+     */
+    public class Coeff
+    {
+        public int Rating { get; set; }
+        public double Distance { get; set; }
+        public int Count { get; set; }
+
+        public Coeff(int rating, double distance)
+        {
+            Rating = rating;
+            Distance = distance;
+        }
+    }
 
     public static class DictionaryExtension
     {
