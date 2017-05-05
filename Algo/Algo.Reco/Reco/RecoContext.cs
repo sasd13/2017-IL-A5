@@ -154,14 +154,10 @@ namespace Algo
                 }
             }
 
-            IOrderedEnumerable<KeyValuePair<Movie, Coeff>> orderedEnum = moviesMayLiked.OrderByDescending(e => e.Value.Rating/e.Value.Distance);
+            IOrderedEnumerable<KeyValuePair<Movie, Coeff>> orderedEnum = moviesMayLiked.OrderByDescending(e => (e.Value.Rating - 3) * e.Value.Distance);
             /*
-             * pourquoi e.Value.Rating / e.Value.Distance ?
-             * 
-             * e.Value.Rating / e.Value.Count => rating moyen
-             * e.Value.Distance / e.Value.Count => distance moyenne
-             * le but est de classer les films selon par rating moyen decroissant et par distance moyenne croissante => quotient = e.Value.Rating / e.Value.Coeff
-             * 
+             * pourquoi (rating - 3) * distance ?
+             * le but est de classer les films par rating moyen decroissant et par distance moyenne decroissante en valeur absolue => quotient = (rating - 3) * distance
              */
             List<KeyValuePair<Movie, Coeff>> finalEnum = orderedEnum.ToList();
             
