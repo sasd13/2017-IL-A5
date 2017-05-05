@@ -119,6 +119,8 @@ namespace Algo.Optim
 
         public int MaxFlightCount = 50;
 
+        public double WaitingMinutePrice = 4;
+
         public DateTime MaxArrivalDate { get; }
 
         public DateTime MinDepartureDate { get; }
