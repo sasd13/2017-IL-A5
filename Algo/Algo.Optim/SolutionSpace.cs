@@ -38,7 +38,10 @@ namespace Algo.Optim
 
         public void TryRandom( int nbTry )
         {
-
+            while (--nbTry >= 0)
+            {
+                var c = GetRandomInstance().Cost;
+            }
         }
 
         protected abstract SolutionInstance CreateSolutionInstance(int[] coord);
