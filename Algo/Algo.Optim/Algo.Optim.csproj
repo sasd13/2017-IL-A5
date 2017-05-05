@@ -59,6 +59,7 @@
     <Compile Include="Flights\FlightDatabase.cs" />
     <Compile Include="Flights\KayakSession.cs" />
     <Compile Include="Flights\SimpleFlight.cs" />
+    <Compile Include="MeetingInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolutionInstance.cs" />
     <Compile Include="SolutionSpace.cs" />
