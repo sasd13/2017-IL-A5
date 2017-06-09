@@ -46,6 +46,6 @@ namespace Algo.Optim
             }
         }
 
-        protected abstract SolutionInstance CreateSolutionInstance(int[] coord);
+        internal protected abstract SolutionInstance CreateSolutionInstance(int[] coord);
     }
 }
