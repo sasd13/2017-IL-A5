@@ -42,6 +42,54 @@ namespace Algo.Optim
             return c;
         }
 
+        public IEnumerable<SolutionInstance> MonteCarloPath()
+        {
+            SolutionInstance last = this;
+            for(;;)
+            {
+                yield return last;
+                var best = last.BestAmongNeighbors;
+                if (best == last) break;
+            }
+        }
+
+        SolutionInstance BestAmongNeighbors
+        {
+            get
+            {
+                SolutionInstance best = this;
+                foreach( var n in Neighbors )
+                {
+                    if (n.Cost < best.Cost) best = n;
+                }
+                return best;
+            }
+        }
+
+        public IEnumerable<SolutionInstance> Neighbors
+        {
+            get
+            {
+                for( int i = 0; i < _space.Dimension; ++i )
+                {
+                    int prevValue = Coordinates[i] - 1;
+                    if( prevValue >= 0 )
+                    {
+                        int[] prevCoords = (int[])Coordinates.Clone();
+                        prevCoords[i] = prevValue;
+                        yield return _space.CreateSolutionInstance(prevCoords);
+                    }
+                    int nextValue = Coordinates[i] + 1;
+                    if( nextValue < _space.Cardinalities[i] )
+                    {
+                        int[] nextCoords = (int[])Coordinates.Clone();
+                        nextCoords[i] = nextValue;
+                        yield return _space.CreateSolutionInstance(nextCoords);
+                    }
+                }
+            }
+        }
+
         protected abstract double DoComputeCost();
     }
 }
